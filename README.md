@@ -1,5 +1,5 @@
 # Raporum
-Türkçe sağlık raporlarını PDF olarak yükleyip sade Türkçe
+Sağlık raporlarınızı PDF olarak yükleyip Türkçe
 açıklama alabileceğiniz web uygulaması.
 
 ## Kurulum
