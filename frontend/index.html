@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="tr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Raporum</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      /* Sürükle-bırak aktifken border rengini değiştir */
+      .dragover {
+        border-color: #3b82f6 !important;
+        background-color: #eff6ff !important;
+      }
+    </style>
+  </head>
+  <body class="bg-white min-h-screen font-sans text-gray-800">
+
+    <!-- Üst başlık -->
+    <header class="text-center py-10 px-4">
+      <h1 class="text-4xl font-bold text-blue-600 tracking-tight">Raporum</h1>
+      <p class="mt-2 text-gray-500 text-lg">
+        Kan tahlili veya sağlık raporunuzu yükleyin,<br />
+        sade Türkçe ile açıklayalım.
+      </p>
+    </header>
+
+    <main class="max-w-2xl mx-auto px-4 pb-16">
+
+      <!-- Yükleme alanı -->
+      <div id="yukle-alani">
+        <div
+          id="drop-zone"
+          class="border-2 border-dashed border-gray-300 rounded-2xl p-16 text-center cursor-pointer transition-colors duration-200 hover:border-blue-400 hover:bg-blue-50"
+          onclick="document.getElementById('dosya-input').click()"
+        >
+          <!-- İkon -->
+          <svg class="mx-auto mb-4 text-gray-400 w-14 h-14" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+              d="M9 13h6m-3-3v6m5 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586
+                 a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19
+                 a2 2 0 01-2 2z" />
+          </svg>
+          <p class="text-gray-500 text-base">
+            PDF dosyanızı buraya sürükleyin<br />
+            <span class="text-blue-500 font-medium">veya tıklayarak seçin</span>
+          </p>
+          <p class="text-xs text-gray-400 mt-2">Yalnızca PDF · Maks 20 MB</p>
+        </div>
+
+        <!-- Gizli dosya input'u -->
+        <input
+          type="file"
+          id="dosya-input"
+          accept=".pdf"
+          class="hidden"
+        />
+      </div>
+
+      <!-- Yükleniyor durumu -->
+      <div id="yukleniyor" class="hidden text-center py-20">
+        <!-- Spinner -->
+        <svg class="animate-spin mx-auto mb-4 w-12 h-12 text-blue-500" fill="none" viewBox="0 0 24 24">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+          <path class="opacity-75" fill="currentColor"
+            d="M4 12a8 8 0 018-8v8H4z"></path>
+        </svg>
+        <p class="text-gray-500 text-lg">Raporunuz analiz ediliyor...</p>
+        <p class="text-gray-400 text-sm mt-1">Bu işlem birkaç saniye sürebilir.</p>
+      </div>
+
+      <!-- Sonuç ekranı -->
+      <div id="sonuc-alani" class="hidden">
+
+        <!-- Özet kartı -->
+        <div id="ozet-kart" class="rounded-2xl p-5 mb-6 border"></div>
+
+        <!-- Değer kartları -->
+        <div id="degerler-listesi" class="space-y-4"></div>
+
+        <!-- Uyarı metni -->
+        <p id="uyari-metni" class="text-xs text-gray-400 text-center mt-8 px-4"></p>
+
+        <!-- Yeni rapor butonu -->
+        <div class="text-center mt-6">
+          <button
+            id="yeni-rapor-btn"
+            class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-8 py-3 rounded-xl transition-colors duration-200"
+          >
+            Yeni Rapor Yükle
+          </button>
+        </div>
+      </div>
+
+      <!-- Hata mesajı -->
+      <div id="hata-alani" class="hidden bg-red-50 border border-red-200 rounded-2xl p-5 text-center">
+        <p class="text-red-600 font-medium" id="hata-mesaji"></p>
+        <button
+          id="tekrar-dene-btn"
+          class="mt-4 text-sm text-red-500 underline hover:text-red-700"
+        >
+          Tekrar dene
+        </button>
+      </div>
+
+    </main>
+
+    <script>
+      // ─── Durum renk eşlemesi ───────────────────────────────────────────────
+      const DURUM_STILLER = {
+        normal:  { bg: "bg-green-100",  text: "text-green-700",  etiket: "Normal"  },
+        dikkat:  { bg: "bg-yellow-100", text: "text-yellow-700", etiket: "Dikkat"  },
+        yuksek:  { bg: "bg-red-100",    text: "text-red-700",    etiket: "Yüksek"  },
+        dusuk:   { bg: "bg-red-100",    text: "text-red-700",    etiket: "Düşük"   },
+      };
+
+      // ─── DOM referansları ─────────────────────────────────────────────────
+      const dropZone       = document.getElementById("drop-zone");
+      const dosyaInput     = document.getElementById("dosya-input");
+      const yukleAlani     = document.getElementById("yukle-alani");
+      const yukleniyor     = document.getElementById("yukleniyor");
+      const sonucAlani     = document.getElementById("sonuc-alani");
+      const hataAlani      = document.getElementById("hata-alani");
+      const ozetKart       = document.getElementById("ozet-kart");
+      const degerlerListesi = document.getElementById("degerler-listesi");
+      const uyariMetni     = document.getElementById("uyari-metni");
+      const hataMesaji     = document.getElementById("hata-mesaji");
+
+      // ─── Sürükle-bırak olayları ───────────────────────────────────────────
+      dropZone.addEventListener("dragover", (e) => {
+        e.preventDefault();
+        dropZone.classList.add("dragover");
+      });
+
+      dropZone.addEventListener("dragleave", () => {
+        dropZone.classList.remove("dragover");
+      });
+
+      dropZone.addEventListener("drop", (e) => {
+        e.preventDefault();
+        dropZone.classList.remove("dragover");
+        const dosya = e.dataTransfer.files[0];
+        if (dosya) dosyaGonder(dosya);
+      });
+
+      // ─── Dosya seçimi (tıklayarak) ────────────────────────────────────────
+      dosyaInput.addEventListener("change", () => {
+        const dosya = dosyaInput.files[0];
+        if (dosya) dosyaGonder(dosya);
+      });
+
+      // ─── Yeni rapor / tekrar dene butonları ──────────────────────────────
+      document.getElementById("yeni-rapor-btn").addEventListener("click", sifirla);
+      document.getElementById("tekrar-dene-btn").addEventListener("click", sifirla);
+
+      // ─── Arayüzü sıfırla ─────────────────────────────────────────────────
+      function sifirla() {
+        dosyaInput.value = "";
+        goster(yukleAlani);
+        gizle(yukleniyor);
+        gizle(sonucAlani);
+        gizle(hataAlani);
+      }
+
+      // ─── Yardımcı göster/gizle ────────────────────────────────────────────
+      function goster(el) { el.classList.remove("hidden"); }
+      function gizle(el)  { el.classList.add("hidden");    }
+
+      // ─── Ana analiz fonksiyonu ────────────────────────────────────────────
+      async function dosyaGonder(dosya) {
+        // PDF kontrolü
+        if (!dosya.name.toLowerCase().endsWith(".pdf")) {
+          hataGoster("Lütfen yalnızca PDF dosyası yükleyin.");
+          return;
+        }
+
+        // Yükleniyor durumunu göster
+        gizle(yukleAlani);
+        gizle(hataAlani);
+        gizle(sonucAlani);
+        goster(yukleniyor);
+
+        try {
+          // FormData oluştur ve dosyayı ekle
+          const form = new FormData();
+          form.append("file", dosya);
+
+          // Backend'e istek gönder
+          const response = await fetch("http://localhost:8000/analyze", {
+            method: "POST",
+            body: form,
+          });
+
+          const veri = await response.json();
+
+          if (!response.ok) {
+            throw new Error(veri.detail || "Sunucu hatası oluştu.");
+          }
+
+          // Ham yanıt döndüyse (JSON parse hatası)
+          if (veri.raw_response) {
+            throw new Error("Rapor analiz edilemedi. Lütfen tekrar deneyin.");
+          }
+
+          sonucGoster(veri);
+
+        } catch (err) {
+          hataGoster(err.message || "Beklenmeyen bir hata oluştu.");
+        }
+      }
+
+      // ─── Hata ekranı ─────────────────────────────────────────────────────
+      function hataGoster(mesaj) {
+        gizle(yukleniyor);
+        gizle(yukleAlani);
+        gizle(sonucAlani);
+        hataMesaji.textContent = mesaj;
+        goster(hataAlani);
+      }
+
+      // ─── Sonuç ekranını doldur ────────────────────────────────────────────
+      function sonucGoster(veri) {
+        gizle(yukleniyor);
+
+        // Özet kartı — genel duruma göre renk belirle
+        const ozetRenk = ozetRenkBelirle(veri.degerler || []);
+        ozetKart.className = `rounded-2xl p-5 mb-6 border ${ozetRenk.bg} ${ozetRenk.border}`;
+        ozetKart.innerHTML = `
+          <h2 class="font-semibold text-lg ${ozetRenk.text} mb-1">Genel Değerlendirme</h2>
+          <p class="text-gray-700 text-sm leading-relaxed">${veri.ozet || ""}</p>
+        `;
+
+        // Değer kartlarını oluştur
+        degerlerListesi.innerHTML = "";
+        (veri.degerler || []).forEach((d) => {
+          degerlerListesi.appendChild(degerKartiOlustur(d));
+        });
+
+        // Uyarı metni
+        uyariMetni.textContent = veri.uyari || "";
+
+        goster(sonucAlani);
+      }
+
+      // ─── Genel özet rengi: herhangi bir sorun varsa sarı/kırmızı ─────────
+      function ozetRenkBelirle(degerler) {
+        const sorunlu = degerler.some((d) =>
+          ["yuksek", "dusuk"].includes(d.durum)
+        );
+        const dikkat = degerler.some((d) => d.durum === "dikkat");
+
+        if (sorunlu) return { bg: "bg-red-50",    border: "border-red-200",    text: "text-red-700"    };
+        if (dikkat)  return { bg: "bg-yellow-50", border: "border-yellow-200", text: "text-yellow-700" };
+        return             { bg: "bg-green-50",   border: "border-green-200",  text: "text-green-700"  };
+      }
+
+      // ─── Tek bir değer kartı DOM elementi ────────────────────────────────
+      function degerKartiOlustur(d) {
+        const stil = DURUM_STILLER[d.durum] || DURUM_STILLER["normal"];
+        const kart = document.createElement("div");
+        kart.className = "border border-gray-200 rounded-2xl p-5 shadow-sm";
+
+        kart.innerHTML = `
+          <!-- Başlık satırı: isim + durum etiketi -->
+          <div class="flex items-center justify-between mb-3">
+            <h3 class="font-semibold text-gray-800 text-base">${kacan(d.ad)}</h3>
+            <span class="text-xs font-semibold px-3 py-1 rounded-full ${stil.bg} ${stil.text}">
+              ${stil.etiket}
+            </span>
+          </div>
+
+          <!-- Sonuç ve referans aralığı -->
+          <div class="flex gap-6 mb-3 text-sm">
+            <div>
+              <span class="text-gray-400 text-xs block">Sonuç</span>
+              <span class="font-medium text-gray-800">${kacan(d.sonuc)}</span>
+            </div>
+            <div>
+              <span class="text-gray-400 text-xs block">Referans</span>
+              <span class="text-gray-600">${kacan(d.referans)}</span>
+            </div>
+          </div>
+
+          <!-- Türkçe açıklama -->
+          <p class="text-sm text-gray-600 leading-relaxed mb-3">${kacan(d.aciklama)}</p>
+
+          <!-- Doktor sorusu -->
+          <p class="text-xs text-gray-400 italic border-t border-gray-100 pt-3">
+            💬 <em>${kacan(d.doktor_sorusu)}</em>
+          </p>
+        `;
+
+        return kart;
+      }
+
+      // ─── XSS önlemi: HTML özel karakterleri kaçır ────────────────────────
+      function kacan(str) {
+        if (!str) return "";
+        return String(str)
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;")
+          .replace(/'/g, "&#39;");
+      }
+    </script>
+  </body>
+</html>
