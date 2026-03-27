@@ -7,5 +7,3 @@ açıklama alabileceğiniz web uygulaması.
 2. backend/ klasörüne .env dosyası oluştur: GEMINI_API_KEY=...
 3. uvicorn backend.main:app --reload
 4. frontend/index.html dosyasını aç
-
-.env dosyası .gitignore'a eklenmiştir, repoya gitmez.
