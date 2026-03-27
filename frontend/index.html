@@ -283,8 +283,29 @@
           <!-- Türkçe açıklama -->
           <p class="text-sm text-gray-600 leading-relaxed mb-3">${kacan(d.aciklama)}</p>
 
+          ${d.neden ? `
+          <!-- Neden olabilir -->
+          <div class="bg-orange-50 rounded-xl px-4 py-3 mb-2">
+            <p class="text-xs font-semibold text-orange-600 mb-1">Neden olabilir?</p>
+            <p class="text-xs text-gray-600 leading-relaxed">${kacan(d.neden)}</p>
+          </div>` : ""}
+
+          ${d.belirtiler ? `
+          <!-- Vücutta ne hissedilir -->
+          <div class="bg-purple-50 rounded-xl px-4 py-3 mb-2">
+            <p class="text-xs font-semibold text-purple-600 mb-1">Vücutta ne hissedilir?</p>
+            <p class="text-xs text-gray-600 leading-relaxed">${kacan(d.belirtiler)}</p>
+          </div>` : ""}
+
+          <!-- Tekrar test önerisi -->
+          ${d.tekrar_test ? `
+          <div class="bg-blue-50 rounded-xl px-4 py-3 mb-2">
+            <p class="text-xs font-semibold text-blue-600 mb-1">🔁 Ne zaman tekrar test yaptırmalısınız?</p>
+            <p class="text-xs text-gray-600 leading-relaxed">${kacan(d.tekrar_test)}</p>
+          </div>` : ""}
+
           <!-- Doktor sorusu -->
-          <p class="text-xs text-gray-400 italic border-t border-gray-100 pt-3">
+          <p class="text-xs text-gray-400 italic border-t border-gray-100 pt-3 mt-3">
             💬 <em>${kacan(d.doktor_sorusu)}</em>
           </p>
         `;
