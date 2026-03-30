@@ -11,13 +11,7 @@
     <style>
       * { font-family: 'Inter', sans-serif; }
 
-      .hero {
-        background: #0a0f1e;
-        background-image:
-          radial-gradient(ellipse 80% 50% at 50% -10%, rgba(99,102,241,0.18) 0%, transparent 70%);
-      }
-
-      @keyframes fadeUp {
+@keyframes fadeUp {
         from { opacity: 0; transform: translateY(12px); }
         to   { opacity: 1; transform: translateY(0); }
       }
@@ -55,44 +49,30 @@
 
   <body class="bg-[#0a0f1e] min-h-screen antialiased text-slate-900">
 
-    <!-- ── Hero ──────────────────────────────────────────────────────────── -->
-    <div class="hero">
-      <!-- Logo -->
-      <div class="max-w-2xl mx-auto px-6 pt-7 flex items-center gap-2.5">
-        <div class="w-8 h-8 rounded-xl bg-indigo-600 flex items-center justify-center">
-          <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2"
-              d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2
-                 M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>
-          </svg>
-        </div>
-        <span class="text-white font-semibold tracking-tight">Raporum</span>
-      </div>
-
-      <!-- Başlık -->
-      <div class="max-w-2xl mx-auto px-6 pt-12 pb-32 text-center">
-        <p class="inline-flex items-center gap-2 text-indigo-400 text-xs font-semibold tracking-widest uppercase mb-5">
-          <span class="w-1.5 h-1.5 rounded-full bg-indigo-400"></span>
-          Yapay Zeka Destekli
-        </p>
-        <h1 class="text-4xl font-extrabold text-white tracking-tight leading-tight mb-5">
-          Raporunuzu anlayın
-        </h1>
-        <p class="text-slate-400 text-base leading-relaxed max-w-xs mx-auto">
-          PDF'inizi yükleyin, herkesin anlayabileceği sade Türkçe ile açıklayalım.
-        </p>
-      </div>
-    </div>
-
     <!-- ── Ana içerik ─────────────────────────────────────────────────────── -->
-    <main class="max-w-2xl mx-auto px-5 -mt-20 pb-24">
+    <main class="max-w-2xl mx-auto px-5 pt-16 pb-24">
+
+      <!-- Logo + tagline -->
+      <div class="flex flex-col items-center gap-3 mb-8">
+        <div class="flex items-center gap-2.5">
+          <div class="w-8 h-8 rounded-xl bg-indigo-600 flex items-center justify-center">
+            <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2"
+                d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2
+                   M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>
+            </svg>
+          </div>
+          <span class="text-white font-bold text-lg tracking-tight">Raporum</span>
+        </div>
+        <p class="text-slate-500 text-sm">Kan tahlil raporunuzu sade Türkçe ile anlayın</p>
+      </div>
 
       <!-- Form kartı -->
       <div id="yukle-alani" class="bg-white rounded-3xl overflow-hidden shadow-2xl shadow-black/20">
 
         <!-- Hasta bilgileri -->
         <div class="px-8 pt-8 pb-6 border-b border-slate-100">
-          <p class="text-[10px] font-bold uppercase tracking-[.14em] text-slate-400 mb-5">Hasta Bilgileri</p>
+          <p class="text-[10px] font-bold uppercase tracking-[.14em] text-slate-400 mb-5">Bilgileriniz</p>
           <div class="grid grid-cols-2 gap-3">
             <div>
               <label for="yas-input" class="block text-sm font-semibold text-slate-700 mb-2">Yaş</label>
@@ -218,8 +198,16 @@
 
     </main>
 
-    <footer class="text-center pb-12 text-xs text-slate-400">
-      Raporum · Yapay zeka destekli sağlık raporu analizi
+    <footer class="max-w-2xl mx-auto px-5 pb-12 text-center">
+      <div class="border-t border-slate-800 pt-8">
+        <p class="text-xs text-slate-500 leading-relaxed mb-2">
+          <span class="font-semibold text-slate-400">Yasal Uyarı:</span>
+          Bu uygulama yalnızca bilgilendirme amaçlıdır ve tıbbi tavsiye niteliği taşımaz.
+          Sunulan analizler bir sağlık profesyonelinin değerlendirmesinin yerini tutamaz.
+          Sağlık kararlarınızı mutlaka doktorunuza danışarak alın.
+        </p>
+        <p class="text-xs text-slate-600">Raporum · Yapay zeka destekli rapor analizi</p>
+      </div>
     </footer>
 
     <script>
