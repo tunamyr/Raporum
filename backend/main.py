@@ -63,7 +63,7 @@ async def analyze(
             status_code=400,
             detail="Cinsiyet 'erkek' veya 'kadin' olmalıdır.",
         )
-
+ 
     # Sadece PDF kabul et
     if not file.filename.lower().endswith(".pdf"):
         raise HTTPException(
