@@ -35,32 +35,24 @@ Kan tahlili ve sağlık raporlarını PDF olarak yükleyin, sade Türkçe açık
 
 ## Mimari
 
+```mermaid
 flowchart TD
     A([Kullanıcı]) -->|PDF + yaş + cinsiyet| B[Frontend\nHTML / JavaScript]
-
     B -->|POST /analyze\nmultipart/form-data| C[Backend\nFastAPI]
-
     C --> D{Rate Limiter\nslowapi\n10 istek/gün/IP}
     D -->|Limit aşıldı| E[429 Too Many Requests]
     D -->|OK| F[Doğrulama\nPDF mi? Boyut? Cinsiyet?]
-
     F -->|Geçersiz| G[400 Bad Request]
     F -->|Geçerli| H[parser.py\nPyMuPDF]
-
     H -->|Ham metin| I[analyzer.py]
     I -->|Metin XML etikete sarılır\nPrompt injection koruması| J[Google Gemini API\ngemini-2.5-flash-lite]
-
     J -->|JSON yanıt| K{Sağlık belgesi mi?}
     K -->|Hayır| L[422 Sağlık dışı belge]
     K -->|Evet| M[Sonuç JSON]
-
     M -->|Analiz sonucu| B
     B -->|Değer kartları\nözet + istatistik| A
-
     N[.env\nGEMINI_API_KEY] -.->|load_dotenv| I
-
-
----
+```
 
 ## Kurulum (Lokal)
 
