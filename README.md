@@ -19,7 +19,7 @@ Kan tahlili ve sağlık raporlarını PDF olarak yükleyin, sade Türkçe açık
 
 ![Python](https://img.shields.io/badge/Python-3776AB?style=flat&logo=python&logoColor=white)
 ![FastAPI](https://img.shields.io/badge/FastAPI-009688?style=flat&logo=fastapi&logoColor=white)
-![Google Gemini](https://img.shields.io/badge/Gemini_1.5_Flash-4285F4?style=flat&logo=google&logoColor=white)
+![Google Gemini](https://img.shields.io/badge/Gemini_2.5_Flash_Lite-4285F4?style=flat&logo=google&logoColor=white)
 ![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=flat&logo=tailwind-css&logoColor=white)
 
 ## Teknolojiler
@@ -28,7 +28,7 @@ Kan tahlili ve sağlık raporlarını PDF olarak yükleyin, sade Türkçe açık
 |--------|-----------|
 | Backend | Python, FastAPI |
 | PDF Okuma | PyMuPDF |
-| Yapay Zeka | Google Gemini 1.5 Flash |
+| Yapay Zeka | Google Gemini 2.5 Flash Lite |
 | Frontend | HTML, Tailwind CSS |
 
 ---
@@ -74,8 +74,8 @@ flowchart TD
 
 ### 1. Repoyu klonla
 ```bash
-git clone https://github.com/kullaniciadin/raporum.git
-cd raporum
+git clone https://github.com/tunamyr/Raporum.git
+cd Raporum
 ```
 
 ### 2. Bağımlılıkları kur
