@@ -97,4 +97,12 @@ async def analyze(
             status_code=500,
             detail=f"Analiz sırasında bir hata oluştu: {str(e)}",
         )
+
+    # Sağlık dışı belge kontrolü
+    if sonuc.get("saglik_disi"):
+        raise HTTPException(
+            status_code=422,
+            detail="Bu belge bir sağlık raporu değil. Lütfen kan tahlili, EKG, ultrason gibi tıbbi bir belge yükleyin.",
+        )
+
     return sonuc
