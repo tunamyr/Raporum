@@ -23,9 +23,19 @@
       @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
       .blink { animation: blink 2s ease-in-out infinite; }
 
-      .dragover {
+.dragover {
         border-color: #6366f1 !important;
         background-color: #eef2ff !important;
+      }
+
+      @media print {
+        body { background: #fff !important; }
+        #yukle-alani, #yukleniyor, #hata-alani, footer,
+        #pdf-indir-btn, #yeni-rapor-btn, #stats-bar { display: none !important; }
+        #sonuc-alani { display: block !important; }
+        main { margin-top: 0 !important; padding-top: 0 !important; }
+        .value-card { box-shadow: none !important; border: 1px solid #e2e8f0 !important; page-break-inside: avoid; }
+        .fade-up { animation: none !important; opacity: 1 !important; }
       }
 
       .card-hover {
@@ -49,23 +59,101 @@
 
   <body class="bg-[#0a0f1e] min-h-screen antialiased text-slate-900">
 
-    <!-- ── Ana içerik ─────────────────────────────────────────────────────── -->
-    <main class="max-w-2xl mx-auto px-5 pt-16 pb-24">
-
-      <!-- Logo + tagline -->
-      <div class="flex flex-col items-center gap-3 mb-8">
+    <!-- ── Navbar ─────────────────────────────────────────────────────────── -->
+    <nav class="border-b border-white/5">
+      <div class="max-w-5xl mx-auto px-6 h-14 flex items-center">
         <div class="flex items-center gap-2.5">
-          <div class="w-8 h-8 rounded-xl bg-indigo-600 flex items-center justify-center">
-            <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div class="w-7 h-7 rounded-lg bg-indigo-600 flex items-center justify-center">
+            <svg class="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2"
                 d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2
                    M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>
             </svg>
           </div>
-          <span class="text-white font-bold text-lg tracking-tight">Raporum</span>
+          <span class="text-white font-bold text-base tracking-tight">Raporum</span>
         </div>
-        <p class="text-slate-500 text-sm">Sağlık raporlarınızı sade Türkçe ile anlayın</p>
       </div>
+    </nav>
+
+    <!-- ── Hero ───────────────────────────────────────────────────────────── -->
+    <section class="max-w-2xl mx-auto px-5 pt-14 pb-12 text-center">
+      <h1 class="text-3xl font-bold text-white mb-4 tracking-tight leading-tight">
+        Sağlık Değerleriniz<br class="hidden sm:block"> Kendi Dilinizde
+      </h1>
+      <p class="text-slate-400 text-base leading-relaxed mb-10 max-w-md mx-auto">
+        Kan tahlili veya sağlık raporunuzu yükleyin.
+        Yapay zeka her değeri analiz eder, ne anlama geldiğini açıklar.
+      </p>
+
+      <!-- Adımlar -->
+      <div class="grid grid-cols-3 gap-4 mb-7">
+
+        <!-- Adım 1 -->
+        <div class="text-center">
+          <div class="relative mx-auto mb-4" style="width:52px;height:52px">
+            <div class="w-full h-full rounded-2xl bg-slate-800/80 border border-slate-700/60 flex items-center justify-center shadow-lg">
+              <svg style="width:22px;height:22px" class="text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"
+                  d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
+              </svg>
+            </div>
+            <span class="absolute -top-1.5 -right-1.5 flex items-center justify-center rounded-full bg-indigo-600 text-white font-bold shadow" style="width:18px;height:18px;font-size:9px">1</span>
+          </div>
+          <p class="text-sm font-semibold text-slate-200 mb-1.5">PDF Yükle</p>
+          <p class="text-xs text-slate-500 leading-relaxed">Sağlık raporunu seç veya sürükle bırak</p>
+        </div>
+
+        <!-- Adım 2 -->
+        <div class="text-center">
+          <div class="relative mx-auto mb-4" style="width:52px;height:52px">
+            <div class="w-full h-full rounded-2xl bg-slate-800/80 border border-slate-700/60 flex items-center justify-center shadow-lg">
+              <svg style="width:22px;height:22px" class="text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"
+                  d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
+              </svg>
+            </div>
+            <span class="absolute -top-1.5 -right-1.5 flex items-center justify-center rounded-full bg-indigo-600 text-white font-bold shadow" style="width:18px;height:18px;font-size:9px">2</span>
+          </div>
+          <p class="text-sm font-semibold text-slate-200 mb-1.5">Analiz Başlat</p>
+          <p class="text-xs text-slate-500 leading-relaxed">Yapay zeka tüm değerleri tek tek inceler</p>
+        </div>
+
+        <!-- Adım 3 -->
+        <div class="text-center">
+          <div class="relative mx-auto mb-4" style="width:52px;height:52px">
+            <div class="w-full h-full rounded-2xl bg-slate-800/80 border border-slate-700/60 flex items-center justify-center shadow-lg">
+              <svg style="width:22px;height:22px" class="text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"
+                  d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>
+              </svg>
+            </div>
+            <span class="absolute -top-1.5 -right-1.5 flex items-center justify-center rounded-full bg-indigo-600 text-white font-bold shadow" style="width:18px;height:18px;font-size:9px">3</span>
+          </div>
+          <p class="text-sm font-semibold text-slate-200 mb-1.5">Sonuçları Anla</p>
+          <p class="text-xs text-slate-500 leading-relaxed">Her değeri sade Türkçe ile öğren</p>
+        </div>
+
+      </div>
+
+      <!-- Özellik çipleri -->
+      <div class="flex flex-wrap justify-center gap-2">
+        <span class="inline-flex items-center gap-1.5 text-xs text-slate-400 bg-slate-800/60 border border-slate-700/50 rounded-full px-3.5 py-1.5">
+          <svg class="w-3 h-3 text-emerald-400" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+          Yaş ve cinsiyete özel analiz
+        </span>
+        <span class="inline-flex items-center gap-1.5 text-xs text-slate-400 bg-slate-800/60 border border-slate-700/50 rounded-full px-3.5 py-1.5">
+          <svg class="w-3 h-3 text-emerald-400" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+          Şikayetlerle ilişkilendirilir
+        </span>
+        <span class="inline-flex items-center gap-1.5 text-xs text-slate-400 bg-slate-800/60 border border-slate-700/50 rounded-full px-3.5 py-1.5">
+          <svg class="w-3 h-3 text-emerald-400" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+          Doktora sorulacak sorular
+        </span>
+      </div>
+    </section>
+
+    <!-- ── Ana içerik ─────────────────────────────────────────────────────── -->
+    <main class="max-w-2xl mx-auto px-5 pb-24">
 
       <!-- Form kartı -->
       <div id="yukle-alani" class="bg-white rounded-3xl overflow-hidden shadow-2xl shadow-black/20">
@@ -93,6 +181,17 @@
                 <option value="erkek">Erkek</option>
               </select>
             </div>
+          </div>
+          <div class="mt-3">
+            <label for="sikayet-input" class="block text-sm font-semibold text-slate-700 mb-2">
+              Şikayetleriniz <span class="text-slate-400 font-normal">(isteğe bağlı)</span>
+            </label>
+            <textarea
+              id="sikayet-input"
+              rows="3"
+              placeholder="Doktora bahsettiğiniz şikayetleriniz veya ilave bilgiler (örn. son iki haftadır baş ağrısı, yorgunluk hissediyorum)"
+              class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-800 placeholder-slate-300 focus:outline-none focus:bg-white focus:ring-2 focus:ring-indigo-400/40 focus:border-indigo-400 transition resize-none"
+            ></textarea>
           </div>
         </div>
 
@@ -168,9 +267,17 @@
         </div>
 
         <!-- Yeni rapor butonu -->
-        <div class="text-center pt-2">
+        <div class="flex justify-center gap-3 pt-2">
+          <button id="pdf-indir-btn"
+            class="inline-flex items-center gap-2 bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 text-sm font-semibold px-6 py-3 rounded-2xl shadow-sm transition-colors">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+            </svg>
+            PDF İndir
+          </button>
           <button id="yeni-rapor-btn"
-            class="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold px-7 py-3 rounded-2xl shadow-lg shadow-indigo-500/25 transition-colors">
+            class="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold px-6 py-3 rounded-2xl shadow-lg shadow-indigo-500/25 transition-colors">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                 d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
@@ -254,6 +361,7 @@
       const dosyaInput  = $("dosya-input");
 
       let seciliDosya = null;
+      let sonAnalizVerisi = null;
 
       // ─── Yardımcılar ────────────────────────────────────────────────────
       const goster = (el) => el.classList.remove("hidden");
@@ -264,6 +372,11 @@
         return String(str)
           .replace(/&/g,"&amp;").replace(/</g,"&lt;")
           .replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#39;");
+      }
+
+      // ─── PDF oluştur ──────────────────────────────────────────────────────
+      function pdfIndir() {
+        window.print();
       }
 
       // ─── Sürükle-bırak ───────────────────────────────────────────────────
@@ -290,6 +403,7 @@
         dosyaGonder(seciliDosya);
       });
       $("yeni-rapor-btn").addEventListener("click", sifirla);
+      $("pdf-indir-btn").addEventListener("click", pdfIndir);
       $("tekrar-dene-btn").addEventListener("click", sifirla);
 
       function sifirla() {
@@ -317,6 +431,8 @@
           form.append("file", dosya);
           if (yas)      form.append("yas",      yas);
           if (cinsiyet) form.append("cinsiyet", cinsiyet);
+          const sikayet = $("sikayet-input").value.trim();
+          if (sikayet)  form.append("sikayet",  sikayet);
           const res  = await fetch("http://localhost:8000/analyze", { method:"POST", body:form });
           const veri = await res.json();
           if (!res.ok)          throw new Error(veri.detail || "Sunucu hatası oluştu.");
@@ -335,6 +451,7 @@
 
       // ─── Sonuç ───────────────────────────────────────────────────────────
       function sonucGoster(veri) {
+        sonAnalizVerisi = veri;
         gizle(yukleniyor);
         const degerler = veri.degerler || [];
 
@@ -441,7 +558,8 @@
             ${bilgiSatiri("Tekrar test önerisi",    d.tekrar_test)}
             ${d.doktor_sorusu ? `
             <div class="pt-3 border-t border-slate-50 mt-1">
-              <p class="text-xs text-slate-400 italic leading-relaxed">"${kacan(d.doktor_sorusu)}"</p>
+              <p class="text-[10px] font-bold uppercase tracking-[.12em] text-slate-400 mb-1.5">Doktorunuza Sorabilirsiniz</p>
+              <p class="text-xs text-slate-500 italic leading-relaxed">"${kacan(d.doktor_sorusu)}"</p>
             </div>` : ""}
           </div>
         `;

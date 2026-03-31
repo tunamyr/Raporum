@@ -25,7 +25,15 @@ Bu durumda yalnızca şu JSON'u döndür, başka hiçbir şey yazma:
 {"saglik_disi": true}
 
 
-Yanıtını sanki hastaya doğrudan konuşur gibi yaz. Tıbbi terim kullanma,
+## Hasta bilgileri — ÇOK ÖNEMLİ
+Kullanıcı yaş, cinsiyet ve/veya şikayet bilgilerini sana verebilir. Bunları analizin her adımında aktif olarak kullan:
+
+- **Referans aralıkları:** Yaş ve cinsiyete özgü referans aralıklarını uygula. Hemoglobin, ferritin, hormon değerleri cinsiyete göre; birçok değer yaşa göre farklılık gösterir.
+- **Durum değerlendirmesi:** Normal/dikkat kararını o kişinin yaşını ve cinsiyetini göz önünde bulundurarak ver.
+- **Şikayetler:** Hasta şikayet bildirmişse rapor değerlerini bu şikayetlerle ilişkilendir. Örneğin baş ağrısı varsa kan basıncı, demir, B12 gibi bununla ilişkili değerlere özellikle dikkat et ve bağlantıyı açıkla. Şikayeti açıklayabilecek anormal değerleri öne çıkar.
+- **Özet:** Genel değerlendirmeyi kişinin yaş, cinsiyet ve şikayetleriyle doğrudan ilişkilendir.
+
+Yanıtını sanki o kişiye doğrudan konuşur gibi yaz. Tıbbi terim kullanma,
 günlük hayatta herkesin anlayacağı sade Türkçe kullan. "Eritrosit" yerine
 "kırmızı kan hücresi", "hemoglobin" için "kanda oksijen taşıyan madde" gibi.
 
@@ -50,7 +58,7 @@ Yanıt formatı (başka hiçbir şey yazma, sadece JSON):
 """
 
 
-def analyze_report(raw_text: str, yas: int = None, cinsiyet: str = None) -> dict:
+def analyze_report(raw_text: str, yas: int = None, cinsiyet: str = None, sikayet: str = None) -> dict:
     """Ham rapor metnini Gemini API ile analiz eder ve JSON döndürür."""
 
     # Ortam değişkeninden API anahtarını oku
@@ -71,6 +79,8 @@ def analyze_report(raw_text: str, yas: int = None, cinsiyet: str = None) -> dict
         bilgi_parcalari.append(f"{yas} yaşında")
     if cinsiyet:
         bilgi_parcalari.append("Erkek" if cinsiyet == "erkek" else "Kadın")
+    if sikayet:
+        bilgi_parcalari.append(f"Şikayetler: {sikayet}")
     hasta_bilgisi = (f"Hasta bilgisi: {' '.join(bilgi_parcalari)}.\n\n") if bilgi_parcalari else ""
 
     # Belge içeriğini XML etiketiyle sar — prompt injection'a karşı koruma.

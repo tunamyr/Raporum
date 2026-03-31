@@ -51,6 +51,7 @@ async def analyze(
     file: UploadFile = File(...),
     yas: int = Form(None),
     cinsiyet: str = Form(None),
+    sikayet: str = Form(None),
 ):
     """
     PDF dosyasını, yaş ve cinsiyeti alır; metin çıkarır ve Gemini ile analiz eder.
@@ -89,7 +90,7 @@ async def analyze(
 
     # Metni analiz et (yaş ve cinsiyet bilgisiyle)
     try:
-        sonuc = analyze_report(ham_metin, yas=yas, cinsiyet=cinsiyet)
+        sonuc = analyze_report(ham_metin, yas=yas, cinsiyet=cinsiyet, sikayet=sikayet)
     except EnvironmentError as e:
         raise HTTPException(status_code=500, detail=str(e))
     except Exception as e:
