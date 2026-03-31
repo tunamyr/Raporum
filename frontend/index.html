@@ -308,18 +308,15 @@
         }
         const yas      = $("yas-input").value.trim();
         const cinsiyet = $("cinsiyet-input").value;
-        if (!yas || Number(yas) < 1 || Number(yas) > 120) {
+        if (yas && (Number(yas) < 1 || Number(yas) > 120)) {
           hataGoster("Lütfen geçerli bir yaş girin (1–120)."); return;
-        }
-        if (!cinsiyet) {
-          hataGoster("Lütfen cinsiyet seçin."); return;
         }
         gizle(yukleAlani); gizle(hataAlani); gizle(sonucAlani); goster(yukleniyor);
         try {
           const form = new FormData();
           form.append("file", dosya);
-          form.append("yas",  yas);
-          form.append("cinsiyet", cinsiyet);
+          if (yas)      form.append("yas",      yas);
+          if (cinsiyet) form.append("cinsiyet", cinsiyet);
           const res  = await fetch("http://localhost:8000/analyze", { method:"POST", body:form });
           const veri = await res.json();
           if (!res.ok)          throw new Error(veri.detail || "Sunucu hatası oluştu.");

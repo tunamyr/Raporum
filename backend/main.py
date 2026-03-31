@@ -49,16 +49,16 @@ def root():
 async def analyze(
     request: Request,
     file: UploadFile = File(...),
-    yas: int = Form(...),
-    cinsiyet: str = Form(...),
+    yas: int = Form(None),
+    cinsiyet: str = Form(None),
 ):
     """
     PDF dosyasını, yaş ve cinsiyeti alır; metin çıkarır ve Gemini ile analiz eder.
     Her IP adresi günde en fazla GUNLUK_LIMIT kadar istek atabilir.
     """
 
-    # Cinsiyet değeri kontrolü
-    if cinsiyet not in ("erkek", "kadin"):
+    # Cinsiyet değeri kontrolü (gönderilmişse geçerli olmalı)
+    if cinsiyet is not None and cinsiyet not in ("erkek", "kadin"):
         raise HTTPException(
             status_code=400,
             detail="Cinsiyet 'erkek' veya 'kadin' olmalıdır.",

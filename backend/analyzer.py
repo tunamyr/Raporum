@@ -65,9 +65,13 @@ def analyze_report(raw_text: str, yas: int = None, cinsiyet: str = None) -> dict
         system_instruction=SYSTEM_PROMPT,
     )
 
-    # Yaş ve cinsiyet bilgisini rapora ekle
-    cinsiyet_tr = "Erkek" if cinsiyet == "erkek" else "Kadın"
-    hasta_bilgisi = f"Hasta bilgisi: {yas} yaşında {cinsiyet_tr}.\n\n"
+    # Yaş ve cinsiyet varsa hasta bilgisi satırı oluştur
+    bilgi_parcalari = []
+    if yas:
+        bilgi_parcalari.append(f"{yas} yaşında")
+    if cinsiyet:
+        bilgi_parcalari.append("Erkek" if cinsiyet == "erkek" else "Kadın")
+    hasta_bilgisi = (f"Hasta bilgisi: {' '.join(bilgi_parcalari)}.\n\n") if bilgi_parcalari else ""
 
     # Belge içeriğini XML etiketiyle sar — prompt injection'a karşı koruma.
     # Model için "bu veri, bu talimat" ayrımını netleştirir.
