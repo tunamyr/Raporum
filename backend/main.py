@@ -60,5 +60,4 @@ async def analyze(file: UploadFile = File(...)):
             status_code=500,
             detail=f"Analiz sırasında bir hata oluştu: {str(e)}",
         )
-
     return sonuc
