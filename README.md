@@ -59,12 +59,13 @@ flowchart TD
     H2 -->|Görsel listesi| I
 
     I --> J{Yaş / cinsiyet / şikayet\ngirildi mi?}
+    I2 --> J
     J -->|Evet| K[Kişiselleştirilmiş\nhasta bilgisi satırı]
     J -->|Hayır| L[Genel analiz]
     K --> M
     L --> M
 
-    M[Metin XML etiketle sarılır\nPrompt injection koruması]
+    M[Hasta bilgisi + içerik\nGemini'ye gönderilir]
     M -->|İstek| N[Google Gemini API\ngemini-2.5-flash-lite]
 
     N -->|JSON yanıt| O{Sağlık belgesi mi?}
@@ -75,7 +76,6 @@ flowchart TD
     B -->|Değer kartları\nreferans barı + filtre + özet| A
 
     R[.env\nGEMINI_API_KEY] -.->|load_dotenv| I
-    I2 --> M
 ```
 
 ## Kurulum (Lokal)
