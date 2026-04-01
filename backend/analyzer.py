@@ -1,9 +1,11 @@
+import io
 import json
 import os
 import re
 
 import google.generativeai as genai
 from dotenv import load_dotenv
+from PIL import Image
 
 # .env dosyasını yükle (Replit Secrets ile de uyumlu çalışır)
 load_dotenv()
@@ -58,8 +60,16 @@ Yanıt formatı (başka hiçbir şey yazma, sadece JSON):
 """
 
 
-def analyze_report(raw_text: str, yas: int = None, cinsiyet: str = None, sikayet: str = None) -> dict:
-    """Ham rapor metnini Gemini API ile analiz eder ve JSON döndürür."""
+def analyze_report(
+    raw_text: str = None,
+    image_bytes: bytes = None,
+    image_mime: str = None,
+    image_list: list = None,
+    yas: int = None,
+    cinsiyet: str = None,
+    sikayet: str = None,
+) -> dict:
+    """Ham rapor metnini veya görselini Gemini API ile analiz eder ve JSON döndürür."""
 
     # Ortam değişkeninden API anahtarını oku
     api_key = os.getenv("GEMINI_API_KEY")
@@ -83,17 +93,24 @@ def analyze_report(raw_text: str, yas: int = None, cinsiyet: str = None, sikayet
         bilgi_parcalari.append(f"Şikayetler: {sikayet}")
     hasta_bilgisi = (f"Hasta bilgisi: {' '.join(bilgi_parcalari)}.\n\n") if bilgi_parcalari else ""
 
-    # Belge içeriğini XML etiketiyle sar — prompt injection'a karşı koruma.
-    # Model için "bu veri, bu talimat" ayrımını netleştirir.
-    icerik = (
-        hasta_bilgisi
-        + "<saglik_belgesi>\n"
-        + raw_text
-        + "\n</saglik_belgesi>"
-    )
-
-    # Modele rapor metnini gönder
-    response = model.generate_content(icerik)
+    if raw_text is not None:
+        # Metin: XML etiketiyle sar — prompt injection'a karşı koruma
+        icerik = (
+            hasta_bilgisi
+            + "<saglik_belgesi>\n"
+            + raw_text
+            + "\n</saglik_belgesi>"
+        )
+        response = model.generate_content(icerik)
+    elif image_list is not None:
+        # Taranmış PDF: birden fazla sayfa görseli
+        prefix = hasta_bilgisi + "Aşağıdaki sağlık belgesi sayfalarını analiz et:"
+        response = model.generate_content([prefix] + image_list)
+    else:
+        # Tek görsel (JPEG/PNG)
+        gorsel = Image.open(io.BytesIO(image_bytes))
+        prefix = hasta_bilgisi + "Aşağıdaki sağlık belgesi görselini analiz et:"
+        response = model.generate_content([prefix, gorsel])
     yanit_metni = response.text.strip()
 
     # ```json ... ``` bloklarını temizle

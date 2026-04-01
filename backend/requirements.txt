@@ -5,3 +5,4 @@ PyMuPDF
 google-generativeai
 python-dotenv
 slowapi
+Pillow

@@ -5,12 +5,13 @@ load_dotenv()
 
 from fastapi import FastAPI, File, Form, HTTPException, Request, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
-from slowapi import Limiter, _rate_limit_exceeded_handler
+from fastapi.responses import JSONResponse
+from slowapi import Limiter
 from slowapi.errors import RateLimitExceeded
 from slowapi.util import get_remote_address
 
 from analyzer import analyze_report
-from parser import extract_text
+from parser import extract_text, pdf_to_images
 
 # Günlük maksimum dosya boyutu: 10 MB
 MAX_DOSYA_BOYUTU = 10 * 1024 * 1024
@@ -24,9 +25,16 @@ limiter = Limiter(key_func=get_remote_address)
 
 app = FastAPI(title="Raporum API")
 
-# Rate limit aşıldığında 429 döndür
+
+async def rate_limit_handler(_request: Request, _exc: RateLimitExceeded):
+    return JSONResponse(
+        status_code=429,
+        content={"detail": "Günlük istek limitinize ulaştınız. Lütfen yarın tekrar deneyin."},
+    )
+
+
 app.state.limiter = limiter
-app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+app.add_exception_handler(RateLimitExceeded, rate_limit_handler)
 
 # Tüm originlere CORS izni ver
 app.add_middleware(
@@ -58,18 +66,26 @@ async def analyze(
     Her IP adresi günde en fazla GUNLUK_LIMIT kadar istek atabilir.
     """
 
+    DESTEKLENEN_FORMATLAR = {
+        ".pdf":  "pdf",
+        ".jpg":  "image/jpeg",
+        ".jpeg": "image/jpeg",
+        ".png":  "image/png",
+    }
+
     # Cinsiyet değeri kontrolü (gönderilmişse geçerli olmalı)
     if cinsiyet is not None and cinsiyet not in ("erkek", "kadin"):
         raise HTTPException(
             status_code=400,
             detail="Cinsiyet 'erkek' veya 'kadin' olmalıdır.",
         )
- 
-    # Sadece PDF kabul et
-    if not file.filename.lower().endswith(".pdf"):
+
+    # Format kontrolü
+    uzanti = os.path.splitext(file.filename.lower())[1]
+    if uzanti not in DESTEKLENEN_FORMATLAR:
         raise HTTPException(
             status_code=400,
-            detail="Yalnızca PDF dosyaları kabul edilmektedir.",
+            detail="Yalnızca PDF, JPEG ve PNG dosyaları kabul edilmektedir.",
         )
 
     # Dosya içeriğini oku
@@ -82,22 +98,25 @@ async def analyze(
             detail="Dosya boyutu 10 MB'ı aşamaz.",
         )
 
-    # PDF'den metin çıkar
+    # PDF → metin çıkar; görsel → doğrudan Gemini'ye gönder
+    dosya_turu = DESTEKLENEN_FORMATLAR[uzanti]
     try:
-        ham_metin = extract_text(dosya_icerigi, file.filename)
+        if dosya_turu == "pdf":
+            ham_metin = extract_text(dosya_icerigi, file.filename)
+            if ham_metin:
+                sonuc = analyze_report(raw_text=ham_metin, yas=yas, cinsiyet=cinsiyet, sikayet=sikayet)
+            else:
+                # Taranmış PDF — sayfaları görsel olarak işle
+                gorsel_listesi = pdf_to_images(dosya_icerigi)
+                sonuc = analyze_report(image_list=gorsel_listesi, yas=yas, cinsiyet=cinsiyet, sikayet=sikayet)
+        else:
+            sonuc = analyze_report(image_bytes=dosya_icerigi, image_mime=dosya_turu, yas=yas, cinsiyet=cinsiyet, sikayet=sikayet)
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
-
-    # Metni analiz et (yaş ve cinsiyet bilgisiyle)
-    try:
-        sonuc = analyze_report(ham_metin, yas=yas, cinsiyet=cinsiyet, sikayet=sikayet)
     except EnvironmentError as e:
         raise HTTPException(status_code=500, detail=str(e))
     except Exception as e:
-        raise HTTPException(
-            status_code=500,
-            detail=f"Analiz sırasında bir hata oluştu: {str(e)}",
-        )
+        raise HTTPException(status_code=500, detail=f"Analiz sırasında bir hata oluştu: {str(e)}")
 
     # Sağlık dışı belge kontrolü
     if sonuc.get("saglik_disi"):
