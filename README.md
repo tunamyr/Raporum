@@ -1,6 +1,6 @@
 # Raporum 🏥
 
-Kan tahlili ve sağlık raporlarını yükleyin; konsültan hekim denetimli yapay zeka analizi ile sade Türkçe açıklama alın.
+Kan tahlili ve sağlık raporlarını yükleyin; konsültan hekim denetimli tıbbi yapay zeka analizi ile sade Türkçe açıklama alın.
 
 > ⚠️ Bu uygulama tıbbi tavsiye vermez. Sonuçlarınızı mutlaka doktorunuzla değerlendirin.
 
